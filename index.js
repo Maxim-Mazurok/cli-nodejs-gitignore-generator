@@ -1,6 +1,7 @@
 const readline = require('readline');
 const os = require('os');
 const fs = require('fs');
+const path = require('path');
 
 const rl = readline.createInterface({
     input: process.stdin,
@@ -16,8 +17,11 @@ function generateGitIgnore(options) {
     let content = '';
     if (options['.idea'] === true) content += `.idea/${os.EOL}`;
     if (options['node_modules'] === true) content += `node_modules/${os.EOL}`;
+    return content;
+}
 
-    fs.writeFile('.gitignore', content, 'utf8', (err) => {
+function saveToFile(content, filePath) {
+    fs.writeFile(filePath, content, 'utf8', (err) => {
         if (err) console.error(err);
         console.log('The file has been saved!');
     });
@@ -30,13 +34,21 @@ rl.question('Do you want to generate .gitignore? (yes)', (answer) => {
             'node_modules': true
         };
 
-        rl.question('Do you want to ignore .idea folder? (yes)', (answer) => {
+        rl.question('ignore .idea? (yes)', (answer) => {
             options['.idea'] = isYes(answer);
 
-            rl.question('Do you want to ignore node_modules folder? (yes)', (answer) => {
+            rl.question('ignore node_modules? (yes)', (answer) => {
                 options['node_modules'] = isYes(answer);
-                generateGitIgnore(options);
-                rl.close();
+                let content = generateGitIgnore(options);
+
+                let filePath = `${__dirname}${path.sep}.gitignore`;
+
+                rl.question(`Save generated file to ${filePath} (yes)`, (answer) => {
+                    if (isYes(answer)) {
+                        saveToFile(content, filePath);
+                    }
+                    rl.close();
+                })
             })
         })
     } else {
