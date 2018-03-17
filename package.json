@@ -1,5 +1,5 @@
 {
-  "name": "cli-nodejs",
+  "name": "cli-nodejs-gitignore-generator",
   "version": "1.0.1",
   "description": "",
   "main": "index.js",
